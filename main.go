@@ -1,17 +1,19 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 )
 
 func main() {
-	loan := 30000.00
-	rate := 5.5
-	term := 24
-	extra := 1000.0
+	loan := flag.Float64("loan", 30000.00, "Loan amount in dollars")
+	rate := flag.Float64("rate", 5.5, "Interest rate in percentage")
+	term := flag.Int("term", 24, "Loan duration in months")
+	extra := flag.Float64("extra", 0.0, "Extra monthly principal in dollars")
+	flag.Parse()
 
-	r, err := calculate(loan, rate, term, extra)
+	r, err := calculate(*loan, *rate, *term, *extra)
 	if err != nil {
 		fmt.Printf("%s", err)
 		os.Exit(1)
