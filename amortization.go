@@ -76,5 +76,6 @@ func calculate(loanAmount float64, interestRate float64, termMonths int, extra f
 
 func paymentAmount(loanAmount float64, interestRate float64, months float64) float64 {
 	rate := (interestRate / 100.0) / 12.0
-	return loanAmount * (rate * math.Pow((rate+1), months)) / (math.Pow((rate+1), months) - 1)
+	p := math.Pow(rate+1, months)
+	return loanAmount * (rate * p) / (p - 1)
 }
