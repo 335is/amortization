@@ -28,34 +28,35 @@ func (p *payment) Equity(loanAmount float64) float64 {
 
 func calculate(loanAmount float64, interestRate float64, termMonths int, extra float64) (*result, error) {
 	if loanAmount <= 0.0 {
-		return nil, fmt.Errorf("Invalid loan amount %f dollars, must be positive", loanAmount)
+		return nil, fmt.Errorf("invalid loan amount %f dollars, must be > 0", loanAmount)
 	}
 
 	if interestRate < 0.0 {
-		return nil, fmt.Errorf("Invalid interest rate %f percent, must be >= 0", interestRate)
+		return nil, fmt.Errorf("invalid interest rate %f percent, must be >= 0", interestRate)
 	}
 
 	if termMonths <= 0.0 {
-		return nil, fmt.Errorf("Invalid loan term %d months, must be > 0", termMonths)
+		return nil, fmt.Errorf("invalid loan term %d months, must be > 0", termMonths)
 	}
 
 	if extra < 0.0 {
-		return nil, fmt.Errorf("Invalid extra principal %f dollars, must be >= 0", extra)
+		return nil, fmt.Errorf("invalid extra principal %f dollars, must be >= 0", extra)
 	}
+
+	monthlyInterestRate := (interestRate / 100.0) / 12.0
 
 	r := result{
 		payments:       []payment{},
-		monthlyPayment: paymentAmount(loanAmount, interestRate, float64(termMonths)) + extra,
+		monthlyPayment: paymentAmount(loanAmount, monthlyInterestRate, float64(termMonths)) + extra,
 		totalInterest:  0.0,
 		totalPaid:      0.0,
 	}
 
 	b := loanAmount
-	i := (interestRate / 100.0)
 	last := false
 	for row := 0; row < termMonths && !last; row++ {
 		p := payment{}
-		p.interest = b * i / 12
+		p.interest = b * monthlyInterestRate
 		p.payment = r.monthlyPayment
 		if r.monthlyPayment > b+p.interest {
 			// special case the last payment
@@ -74,8 +75,7 @@ func calculate(loanAmount float64, interestRate float64, termMonths int, extra f
 	return &r, nil
 }
 
-func paymentAmount(loanAmount float64, interestRate float64, months float64) float64 {
-	rate := (interestRate / 100.0) / 12.0
-	p := math.Pow(rate+1, months)
-	return loanAmount * (rate * p) / (p - 1)
+func paymentAmount(loanAmount float64, monthlyInterestRate float64, months float64) float64 {
+	p := math.Pow(monthlyInterestRate+1, months)
+	return loanAmount * (monthlyInterestRate * p) / (p - 1)
 }
