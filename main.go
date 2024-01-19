@@ -20,7 +20,7 @@ func main() {
 
 	printInput(*loan, *rate, *term, *extra)
 
-	r, err := calculate(*loan, *rate, *term, *extra)
+	r, err := Calculate(*loan, *rate, *term, *extra)
 	if err != nil {
 		fmt.Printf("%s", err)
 		os.Exit(1)

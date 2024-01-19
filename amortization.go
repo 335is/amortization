@@ -26,7 +26,7 @@ func (p *payment) Equity(loanAmount float64) float64 {
 	return loanAmount - p.balance
 }
 
-func calculate(loanAmount float64, interestRate float64, termMonths int, extra float64) (*result, error) {
+func Calculate(loanAmount float64, interestRate float64, termMonths int, extra float64) (*result, error) {
 	if loanAmount <= 0.0 {
 		return nil, fmt.Errorf("invalid loan amount %f dollars, must be > 0", loanAmount)
 	}
